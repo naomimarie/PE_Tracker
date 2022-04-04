@@ -74,12 +74,6 @@ express()
       const tasksId = req.body.tasks_id;
       const duration = req.body.duration;
 
-      const sql = `INSERT INTO observations (users_id, students_id, tasks_id, duration)
-      VALUES (${usersId}, ${studentsId}, ${tasksId}, ${duration})
-      RETURNING id as new_id;`;
-
-      console.log(sql);
-
       const sqlInsert = await client.query(
         `INSERT INTO observations (users_id, students_id, tasks_id, duration)
         VALUES (${usersId}, ${studentsId}, ${tasksId}, ${duration})
