@@ -9,44 +9,74 @@
   <% tasks.forEach(function(r) {%>
     <div style="position: relative; padding: 5px;">
     <button id='<%= r.id %>'
-      onClick='javascript:logTask(<%= r.id %>, value<%= r.id %>.value);'><%= r.name %>
+      onClick='javascript:logTask(<%= r.id %>);'><%= r.name %>
     </button> 
-    <select name="value<%= r.id %>" id="value<%= r.id %>">
-      <option value="'+00:01:00'">00:01:00</option>
-      <option value="'+00:02:00'">00:02:00</option>
-      <option value="'+00:03:00'">00:03:00</option>
-      <option value="'+00:05:00'">00:05:00</option>
-      <option value="'+00:10:00'">00:10:00</option>
-      <option value="'+00:15:00'">00:15:00</option>
-      <option value="'+00:20:00'">00:20:00</option>
-    </select>
-  </div>
+    </div>
 
 
   <% }); %>  
   <script>
     let currentTaskId = null;
 
+    let duration = null;
+    let buttonClick = true;
+    let startTime;
+    let endTime;
+    let minutes;
 
-    const logTask = async function(id, duration) {
-      const response = await fetch('/log', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          users_id: -1,
-          students_id: -1,
-          tasks_id: id,
-          duration: duration
-        })
 
-      });
-      const result = await response.json();
-      console.log(result);
+    const logTask = async function(id) {
+      if(buttonClick) {
+        startTime = performance.now();
+        buttonClick = false;
+      } else {
+        endTime = performance.now();
+        // time in milliseconds
+        let diff = endTime - startTime; 
+        diff = diff / 1000;
 
-      currentTaskId = id;
+        // turn milliseconds to seconds
+        let seconds = Math.round(diff);
+        console.log(seconds + " seconds");
+
+        if(seconds <= 9) {
+          duration = "'00:00:0" + seconds + "'";
+        } else {
+          duration = "'00:00:" + seconds + "'";
+        }
+        
+
+        // change seconds into minutes
+        if(seconds > 60) {
+          minutes = Math.round(seconds / 60);
+          console.log(minutes + "minutes");
+          duration = "'00:" + minutes + ":00'";
+        } else if (minutes > 60) {
+          // convert minutes to hour(s)
+          let hours = Math.round(minutes / 60);
+          console.log(hours + "hours");
+          duration = hours + "'00:00'";
+        }
+
+        const response = await fetch('/log', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            users_id: -1,
+            students_id: -1,
+            tasks_id: id,
+            duration: duration
+          })
+
+        });
+        const result = await response.json();
+        console.log(result);
+
+        currentTaskId = id;
+    }
 
     };
   </script>
