@@ -5,6 +5,7 @@
     <meta charset="utf-8">
 </head>
 <body>
+  
   <h1>Database Tables</h1>
   <ul>
     <% tables.forEach(function(r) { %>
@@ -17,6 +18,6 @@
       <li><%= r.tasks_id %> for <%= r.duration.hours || "00" %>:<%= r.duration.minutes || "00" %>:<%= r.duration.seconds || "00" %></li>
     <% }); %>
   </ul>
-  
+
 </body>
 </html>
